@@ -19,7 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\tile.h" />
+    <ClCompile Include="src\grid.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\tile.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\grid.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{3C78F1D2-7EC4-4843-9BF3-F1A6A5549769}</ProjectGuid>
@@ -72,7 +78,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\sdl2</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)include\sdl2;$(SolutionDir)include;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(SolutionDir)\include;$(SolutionDir)\include\sdl2;</IncludePath>
