@@ -1,6 +1,7 @@
 #include <stdbool.h>
 
 #include "SDL.h"
+#include "SDL_ttf.h"
 
 #include "grid.h"
 #include "tile.h"
@@ -30,6 +31,8 @@ int main(int argc, char * argv[])
    gWinPtr = SDL_CreateWindow("2048", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WW, WH, SDL_WINDOW_SHOWN);
    gRendPtr = SDL_CreateRenderer(gWinPtr, -1, SDL_RENDERER_ACCELERATED);
 
+   TTF_Init();
+
    Grid_New(&g);
    t = Grid_GetRandomEmptyTile(&g);
    t->value = 2;
@@ -57,6 +60,7 @@ int main(int argc, char * argv[])
       SDL_RenderPresent(gRendPtr);
    }
 
+   TTF_Quit();
    SDL_Quit();
 
    return 0;
