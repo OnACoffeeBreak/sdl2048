@@ -159,6 +159,6 @@ void Tile_Init(Tile_t *tilePtr, unsigned char gridRow, unsigned char gridCol, in
    tilePtr->gridCol = gridCol;
    tilePtr->x = x;
    tilePtr->y = y;
-   tilePtr->exp = rand() % (TILE_MAX_EXP+1);
+   tilePtr->exp = 0;
    tilePtr->texture = fGetTileTextureFromTextureMap(rPtr, tilePtr->exp);
 }
