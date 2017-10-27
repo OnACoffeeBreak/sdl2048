@@ -10,11 +10,12 @@ typedef struct {
 } Grid_t;
 
 /**
- * Initialize the grid.
+ * Initialize the grid to an empty grid.
  * 
  * @param [in] gridPtr     Pointer to an allocated Grid_t to initialize
+ * @param [in[ rPtr        Pointer to the renderer to use to render tile textures
  */
-void Grid_New(Grid_t *gridPtr);
+void Grid_Init(Grid_t *gridPtr, SDL_Renderer *rPtr);
 
 /**
  * Out of all empty tiles in the grid, return a random one.

@@ -28,16 +28,16 @@ int main(int argc, char * argv[])
    SDL_Event e;
 
    SDL_Init(SDL_INIT_VIDEO);
+   SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "1");   // This is necessary to make tile numbers look smoother
+
    gWinPtr = SDL_CreateWindow("2048", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WW, WH, SDL_WINDOW_SHOWN);
    gRendPtr = SDL_CreateRenderer(gWinPtr, -1, SDL_RENDERER_ACCELERATED);
 
    TTF_Init();
 
-   Grid_New(&g);
-   t = Grid_GetRandomEmptyTile(&g);
-   t->value = 2;
-   t = Grid_GetRandomEmptyTile(&g);
-   t->value = 2;
+   Grid_Init(&g, gRendPtr);
+///   t = Grid_GetRandomEmptyTile(&g);
+///   t = Grid_GetRandomEmptyTile(&g);
 
 
    while (!quit)
@@ -56,7 +56,6 @@ int main(int argc, char * argv[])
       SDL_RenderClear(gRendPtr);
 
       Grid_Render(&g, gRendPtr);
-
       SDL_RenderPresent(gRendPtr);
    }
 
