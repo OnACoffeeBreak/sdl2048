@@ -3,6 +3,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "grid.h"
 
@@ -19,24 +20,16 @@ void Grid_Init(Grid_t *gridPtr, SDL_Renderer *rPtr)
          int x = TILE_PAD_PX + c * (TILE_SIZE_PX + TILE_PAD_PX);
          int y = TILE_PAD_PX + r * (TILE_SIZE_PX + TILE_PAD_PX);
          Tile_Init(&(gridPtr->tiles[r][c]), r, c, x, y, rPtr);
+         // Add tile to list of empty tiles
+         gridPtr->emptyTiles[r*GRID_SIZE+c] = &gridPtr->tiles[r][c];
       }
    }
+   gridPtr->numEmptyTiles = GRID_SIZE * GRID_SIZE;
 }
 
 Tile_t *Grid_GetRandomEmptyTile(Grid_t *gridPtr)
 {
-   int r = 0;
-   int c = 0;
-
-   // TODO: This will get expensive as the grid fills up! Fix it!
-   // TODO: handle a grid with no empty tiles!
-   do
-   {
-      r = rand() % GRID_SIZE;
-      c = rand() % GRID_SIZE;
-   } while (gridPtr->tiles[r][c].exp > 0);
-
-   return &(gridPtr->tiles[r][c]);
+   return gridPtr->emptyTiles[rand() % gridPtr->numEmptyTiles];
 }
 
 void Grid_Render(Grid_t *gridPtr, SDL_Renderer *rPtr)

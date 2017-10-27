@@ -36,8 +36,10 @@ int main(int argc, char * argv[])
    TTF_Init();
 
    Grid_Init(&g, gRendPtr);
-///   t = Grid_GetRandomEmptyTile(&g);
-///   t = Grid_GetRandomEmptyTile(&g);
+   t = Grid_GetRandomEmptyTile(&g);
+   SDL_Log("Empty tile at %d, %d\n", t->gridRow, t->gridCol);
+   t = Grid_GetRandomEmptyTile(&g);
+   SDL_Log("Empty tile at %d, %d\n", t->gridRow, t->gridCol);
 
 
    while (!quit)

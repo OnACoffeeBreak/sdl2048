@@ -6,7 +6,11 @@
 #define TILE_PAD_PX  (16)   ///< Number of pixels to pad between tiles
 
 typedef struct {
-   Tile_t tiles[GRID_SIZE][GRID_SIZE];         ///< Tiles that make up the grid
+   Tile_t tiles[GRID_SIZE][GRID_SIZE];          ///< Tiles that make up the grid
+   Tile_t *emptyTiles[GRID_SIZE * GRID_SIZE];   ///< Array of pointers to empty tiles
+                                                ///< in tiles[][]. It is kept up-to-date
+                                                ///< with grid changes.
+   int numEmptyTiles;                           ///< Number of empty tiles in emptyTiles.
 } Grid_t;
 
 /**
@@ -18,11 +22,11 @@ typedef struct {
 void Grid_Init(Grid_t *gridPtr, SDL_Renderer *rPtr);
 
 /**
- * Out of all empty tiles in the grid, return a random one.
+ * Out of all empty tiles in the grid, return a pointer to a random one.
  * 
  * @param [in] gridPtr     Pointer to the grid.
  *
- * @retrun A random empty tile from the grid.
+ * @retrun A random empty tile from the grid. NULL if all tiles are occupied.
  */
 Tile_t *Grid_GetRandomEmptyTile(Grid_t *gridPtr);
 
