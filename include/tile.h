@@ -25,3 +25,9 @@ typedef struct {
  * Intialize a new tile
  */
 void Tile_Init(Tile_t *tilePtr, unsigned char gridRow, unsigned char gridCol, int x, int y, SDL_Renderer *rPtr);
+
+/**
+ * Set tile exponent
+ * @TODO: Passing in SDL_Renderer doesn't fit here. What to do?
+ */
+void Tile_SetExp(Tile_t *tilePtr, unsigned char exp, SDL_Renderer *rPtr);

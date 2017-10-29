@@ -7,10 +7,6 @@
 
 typedef struct {
    Tile_t tiles[GRID_SIZE][GRID_SIZE];          ///< Tiles that make up the grid
-   Tile_t *emptyTiles[GRID_SIZE * GRID_SIZE];   ///< Array of pointers to empty tiles
-                                                ///< in tiles[][]. It is kept up-to-date
-                                                ///< with grid changes.
-   int numEmptyTiles;                           ///< Number of empty tiles in emptyTiles.
 } Grid_t;
 
 /**

@@ -36,10 +36,16 @@ int main(int argc, char * argv[])
    TTF_Init();
 
    Grid_Init(&g, gRendPtr);
-   t = Grid_GetRandomEmptyTile(&g);
-   SDL_Log("Empty tile at %d, %d\n", t->gridRow, t->gridCol);
-   t = Grid_GetRandomEmptyTile(&g);
-   SDL_Log("Empty tile at %d, %d\n", t->gridRow, t->gridCol);
+
+   // Add two starting tiles
+   if ((t = Grid_GetRandomEmptyTile(&g)) != NULL)
+   {
+      Tile_SetExp(t, 1, gRendPtr);
+   }
+   if ((t = Grid_GetRandomEmptyTile(&g)) != NULL)
+   {
+      Tile_SetExp(t, 1, gRendPtr);
+   }
 
 
    while (!quit)

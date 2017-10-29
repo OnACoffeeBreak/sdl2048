@@ -162,3 +162,9 @@ void Tile_Init(Tile_t *tilePtr, unsigned char gridRow, unsigned char gridCol, in
    tilePtr->exp = 0;
    tilePtr->texture = fGetTileTextureFromTextureMap(rPtr, tilePtr->exp);
 }
+
+void Tile_SetExp(Tile_t *tilePtr, unsigned char exp, SDL_Renderer *rPtr)
+{
+   tilePtr->exp = exp;
+   tilePtr->texture = fGetTileTextureFromTextureMap(rPtr, tilePtr->exp);
+}
