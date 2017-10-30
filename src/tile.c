@@ -10,6 +10,8 @@
 #include "SDL_ttf.h"
 
 
+static SDL_Renderer *sRenderer = NULL;
+
  // Could re-organize these three arrays into a single array with a
  // custom struct to keep bgColor, fgColor and fontSize together.
 
@@ -82,6 +84,7 @@ static SDL_Texture *sTTMap[TILE_MAX_EXP+1] = { 0 };
 static SDL_Texture *fGetTileTextureFromTextureMap(SDL_Renderer *renderer, unsigned char exp)
 {
    SDL_assert(exp <= TILE_MAX_EXP);
+   SDL_assert(renderer);
 
    if (sTTMap[exp] == NULL)
    {
@@ -153,18 +156,23 @@ static SDL_Texture *fGetTileTextureFromTextureMap(SDL_Renderer *renderer, unsign
    return sTTMap[exp];
 }
 
-void Tile_Init(Tile_t *tilePtr, unsigned char gridRow, unsigned char gridCol, int x, int y, SDL_Renderer *rPtr)
+void Tile_SetRenderer(SDL_Renderer *rPtr)
+{
+   sRenderer = rPtr;
+}
+
+void Tile_Init(Tile_t *tilePtr, unsigned char gridRow, unsigned char gridCol, int x, int y)
 {
    tilePtr->gridRow = gridRow;
    tilePtr->gridCol = gridCol;
    tilePtr->x = x;
    tilePtr->y = y;
    tilePtr->exp = 0;
-   tilePtr->texture = fGetTileTextureFromTextureMap(rPtr, tilePtr->exp);
+   tilePtr->texture = fGetTileTextureFromTextureMap(sRenderer, tilePtr->exp);
 }
 
-void Tile_SetExp(Tile_t *tilePtr, unsigned char exp, SDL_Renderer *rPtr)
+void Tile_SetExp(Tile_t *tilePtr, unsigned char exp)
 {
    tilePtr->exp = exp;
-   tilePtr->texture = fGetTileTextureFromTextureMap(rPtr, tilePtr->exp);
+   tilePtr->texture = fGetTileTextureFromTextureMap(sRenderer, tilePtr->exp);
 }

@@ -3,6 +3,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <time.h>
 
 #include "grid.h"
@@ -13,13 +14,14 @@ void Grid_Init(Grid_t *gridPtr, SDL_Renderer *rPtr)
    // Seed the random number generator
    srand((unsigned)time(NULL));
 
+   Tile_SetRenderer(rPtr);
    for (int r = 0; r < GRID_SIZE; r++)
    {
       for (int c = 0; c < GRID_SIZE; c++)
       {
          int x = TILE_PAD_PX + c * (TILE_SIZE_PX + TILE_PAD_PX);
          int y = TILE_PAD_PX + r * (TILE_SIZE_PX + TILE_PAD_PX);
-         Tile_Init(&(gridPtr->tiles[r][c]), r, c, x, y, rPtr);
+         Tile_Init(&(gridPtr->tiles[r][c]), r, c, x, y);
       }
    }
 }
@@ -35,7 +37,8 @@ Tile_t *Grid_GetRandomEmptyTile(Grid_t *gridPtr)
       {
          if (gridPtr->tiles[r][c].exp == 0)
          {
-            emptyTiles[numEmptyTiles++] = &gridPtr->tiles[r][c];
+            emptyTiles[numEmptyTiles] = &gridPtr->tiles[r][c];
+            numEmptyTiles++;
          }
       }
    }
@@ -73,4 +76,105 @@ void Grid_Render(Grid_t *gridPtr, SDL_Renderer *rPtr)
          SDL_RenderCopy(rPtr, gridPtr->tiles[r][c].texture, NULL, &rect);
       }
    }
+}
+
+void Grid_UpdateUp(Grid_t *gridPtr)
+{
+   bool moved = false;
+   do
+   {
+      moved = false;
+      for (int c = 0; c < GRID_SIZE; c++)
+      {
+         for (int r = 1; r < GRID_SIZE; r++)
+         {
+            if (gridPtr->tiles[r][c].exp != 0)
+            {
+
+               // Move tile one row up if above is clear
+               if (gridPtr->tiles[r - 1][c].exp == 0)
+               {
+                  Tile_SetExp(&gridPtr->tiles[r - 1][c], gridPtr->tiles[r][c].exp);
+                  Tile_SetExp(&gridPtr->tiles[r][c], 0);
+                  moved = true;
+               }
+            }
+         }
+      }
+   } while (moved);
+}
+
+void Grid_UpdateDown(Grid_t *gridPtr)
+{
+   bool moved = false;
+   do
+   {
+      moved = false;
+      for (int c = 0; c < GRID_SIZE; c++)
+      {
+         for (int r = GRID_SIZE - 2; r >= 0; r--)
+         {
+            if (gridPtr->tiles[r][c].exp != 0)
+            {
+               // Move tile one row down if below is clear
+               if (gridPtr->tiles[r + 1][c].exp == 0)
+               {
+                  Tile_SetExp(&gridPtr->tiles[r + 1][c], gridPtr->tiles[r][c].exp);
+                  Tile_SetExp(&gridPtr->tiles[r][c], 0);
+                  moved = true;
+               }
+            }
+         }
+      }
+   } while (moved);
+}
+
+void Grid_UpdateLeft(Grid_t *gridPtr)
+{
+   bool moved = false;
+   do
+   {
+      moved = false;
+      for (int r = 0; r < GRID_SIZE; r++)
+      {
+         for (int c = 1; c < GRID_SIZE; c++)
+         {
+            if (gridPtr->tiles[r][c].exp != 0)
+            {
+               // Move tile one row left if left is clear
+               if (gridPtr->tiles[r][c-1].exp == 0)
+               {
+                  Tile_SetExp(&gridPtr->tiles[r][c-1], gridPtr->tiles[r][c].exp);
+                  Tile_SetExp(&gridPtr->tiles[r][c], 0);
+                  moved = true;
+               }
+            }
+         }
+      }
+   } while (moved);
+}
+
+void Grid_UpdateRight(Grid_t *gridPtr)
+{
+   bool moved = false;
+   do
+   {
+      moved = false;
+      for (int r = 0; r < GRID_SIZE; r++)
+      {
+         for (int c = GRID_SIZE-2; c >= 0; c--)
+         {
+            if (gridPtr->tiles[r][c].exp != 0)
+            {
+               // Move tile one row right if right is clear
+               if (gridPtr->tiles[r][c + 1].exp == 0)
+               {
+                  Tile_SetExp(&gridPtr->tiles[r][c + 1], gridPtr->tiles[r][c].exp);
+                  Tile_SetExp(&gridPtr->tiles[r][c], 0);
+                  moved = true;
+               }
+            }
+         }
+      }
+   } while (moved);
 }

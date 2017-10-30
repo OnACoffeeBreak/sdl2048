@@ -30,3 +30,23 @@ Tile_t *Grid_GetRandomEmptyTile(Grid_t *gridPtr);
  * Render the grid using the supplied SDL renderer.
  */
 void Grid_Render(Grid_t *gridPtr, SDL_Renderer *rPtr);
+
+/**
+ * Move grid tiles up.
+ */
+void Grid_UpdateUp(Grid_t *gridPtr);
+
+/**
+* Move grid tiles down.
+*/
+void Grid_UpdateDown(Grid_t *gridPtr);
+
+/**
+* Move grid tiles left.
+*/
+void Grid_UpdateLeft(Grid_t *gridPtr);
+
+/**
+* Move grid tiles right.
+*/
+void Grid_UpdateRight(Grid_t *gridPtr);

@@ -22,12 +22,17 @@ typedef struct {
 } Tile_t;
 
 /**
- * Intialize a new tile
+ * Tell Tile what renderer to use to render tiles.
  */
-void Tile_Init(Tile_t *tilePtr, unsigned char gridRow, unsigned char gridCol, int x, int y, SDL_Renderer *rPtr);
+void Tile_SetRenderer(SDL_Renderer *rPtr);
+
+/**
+ * Intialize a new tile.
+ */
+void Tile_Init(Tile_t *tilePtr, unsigned char gridRow, unsigned char gridCol, int x, int y);
 
 /**
  * Set tile exponent
  * @TODO: Passing in SDL_Renderer doesn't fit here. What to do?
  */
-void Tile_SetExp(Tile_t *tilePtr, unsigned char exp, SDL_Renderer *rPtr);
+void Tile_SetExp(Tile_t *tilePtr, unsigned char exp);

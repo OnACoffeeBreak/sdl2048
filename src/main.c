@@ -38,15 +38,13 @@ int main(int argc, char * argv[])
    Grid_Init(&g, gRendPtr);
 
    // Add two starting tiles
-   if ((t = Grid_GetRandomEmptyTile(&g)) != NULL)
+   for (int i = 0; i < 2; i++)
    {
-      Tile_SetExp(t, 1, gRendPtr);
+      if ((t = Grid_GetRandomEmptyTile(&g)) != NULL)
+      {
+         Tile_SetExp(t, 1);
+      }
    }
-   if ((t = Grid_GetRandomEmptyTile(&g)) != NULL)
-   {
-      Tile_SetExp(t, 1, gRendPtr);
-   }
-
 
    while (!quit)
    {
@@ -56,6 +54,32 @@ int main(int argc, char * argv[])
          if (e.type == SDL_QUIT)
          {
             quit = true;
+         }
+         else if (e.type == SDL_KEYDOWN)
+         {
+            switch (e.key.keysym.sym)
+            {
+            case SDLK_UP:
+            {
+               Grid_UpdateUp(&g);
+            }
+            break;
+            case SDLK_DOWN:
+            {
+               Grid_UpdateDown(&g);
+            }
+            break;
+            case SDLK_LEFT:
+            {
+               Grid_UpdateLeft(&g);
+            }
+            break;
+            case SDLK_RIGHT:
+            {
+               Grid_UpdateRight(&g);
+            }
+            break;
+            }
          }
       }
 
