@@ -25,6 +25,7 @@ int main(int argc, char * argv[])
    Grid_t g;
    Tile_t *t = NULL;
    bool quit = false;
+   bool tilesMoved = false;
    SDL_Event e;
 
    SDL_Init(SDL_INIT_VIDEO);
@@ -48,6 +49,15 @@ int main(int argc, char * argv[])
 
    while (!quit)
    {
+      if (tilesMoved)
+      {
+         tilesMoved = false;
+         if ((t = Grid_GetRandomEmptyTile(&g)) != NULL)
+         {
+            Tile_SetExp(t, 1);
+         }
+      }
+
       // Handle events on the que
       while (SDL_PollEvent(&e) != 0)
       {
@@ -61,22 +71,22 @@ int main(int argc, char * argv[])
             {
             case SDLK_UP:
             {
-               Grid_UpdateUp(&g);
+               tilesMoved = Grid_UpdateUp(&g);
             }
             break;
             case SDLK_DOWN:
             {
-               Grid_UpdateDown(&g);
+               tilesMoved = Grid_UpdateDown(&g);
             }
             break;
             case SDLK_LEFT:
             {
-               Grid_UpdateLeft(&g);
+               tilesMoved = Grid_UpdateLeft(&g);
             }
             break;
             case SDLK_RIGHT:
             {
-               Grid_UpdateRight(&g);
+               tilesMoved = Grid_UpdateRight(&g);
             }
             break;
             }

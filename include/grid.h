@@ -34,19 +34,19 @@ void Grid_Render(Grid_t *gridPtr, SDL_Renderer *rPtr);
 /**
  * Move grid tiles up.
  */
-void Grid_UpdateUp(Grid_t *gridPtr);
+bool Grid_UpdateUp(Grid_t *gridPtr);
 
 /**
 * Move grid tiles down.
 */
-void Grid_UpdateDown(Grid_t *gridPtr);
+bool Grid_UpdateDown(Grid_t *gridPtr);
 
 /**
 * Move grid tiles left.
 */
-void Grid_UpdateLeft(Grid_t *gridPtr);
+bool Grid_UpdateLeft(Grid_t *gridPtr);
 
 /**
 * Move grid tiles right.
 */
-void Grid_UpdateRight(Grid_t *gridPtr);
+bool Grid_UpdateRight(Grid_t *gridPtr);

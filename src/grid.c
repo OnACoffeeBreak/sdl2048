@@ -8,6 +8,16 @@
 
 #include "grid.h"
 
+static bool fSlideLeft(Grid_t *gridPtr);
+static bool fSlideRight(Grid_t *gridPtr);
+static bool fSlideUp(Grid_t *gridPtr);
+static bool fSlideDown(Grid_t *gridPtr);
+
+static bool fMergeUp(Grid_t *gridPtr);
+static bool fMergeDown(Grid_t *gridPtr);
+static bool fMergeLeft(Grid_t *gridPtr);
+static bool fMergeRight(Grid_t *gridPtr);
+
 
 void Grid_Init(Grid_t *gridPtr, SDL_Renderer *rPtr)
 {
@@ -78,8 +88,65 @@ void Grid_Render(Grid_t *gridPtr, SDL_Renderer *rPtr)
    }
 }
 
-void Grid_UpdateUp(Grid_t *gridPtr)
+bool Grid_UpdateUp(Grid_t *gridPtr)
 {
+   bool movedPre = false;
+   bool merged = false;
+   bool movedPost = false;
+
+   movedPre = fSlideUp(gridPtr);
+   merged = fMergeUp(gridPtr);
+   movedPost = fSlideUp(gridPtr);
+
+   return movedPre || merged || movedPost;
+}
+
+bool Grid_UpdateDown(Grid_t *gridPtr)
+{
+   bool movedPre = false;
+   bool merged = false;
+   bool movedPost = false;
+
+   movedPre = fSlideDown(gridPtr);
+   merged = fMergeDown(gridPtr);
+   movedPost = fSlideDown(gridPtr);
+
+   return movedPre || merged || movedPost;
+}
+
+bool Grid_UpdateLeft(Grid_t *gridPtr)
+{
+   bool movedPre = false;
+   bool merged = false;
+   bool movedPost = false;
+
+   movedPre = fSlideLeft(gridPtr);
+   merged = fMergeLeft(gridPtr);
+   movedPost = fSlideLeft(gridPtr);
+
+   return movedPre || merged || movedPost;
+}
+
+bool Grid_UpdateRight(Grid_t *gridPtr)
+{
+   bool movedPre = false;
+   bool merged = false;
+   bool movedPost = false;
+
+   movedPre = fSlideRight(gridPtr);
+   merged = fMergeRight(gridPtr);
+   movedPost = fSlideRight(gridPtr);
+
+   return movedPre || merged || movedPost;
+}
+
+/**
+ * Push tiles up until tiles cannot be pushed up anymore.
+ * @note this function does not combine/merge tiles.
+ */
+static bool fSlideUp(Grid_t *gridPtr)
+{
+   bool atLeastOneMoved = false;
    bool moved = false;
    do
    {
@@ -97,15 +164,22 @@ void Grid_UpdateUp(Grid_t *gridPtr)
                   Tile_SetExp(&gridPtr->tiles[r - 1][c], gridPtr->tiles[r][c].exp);
                   Tile_SetExp(&gridPtr->tiles[r][c], 0);
                   moved = true;
+                  atLeastOneMoved = true;
                }
             }
          }
       }
    } while (moved);
+   return atLeastOneMoved;
 }
 
-void Grid_UpdateDown(Grid_t *gridPtr)
+/**
+ * Push tiles down until tiles cannot be pushed down anymore.
+ * @note this function does not combine/merge tiles.
+ */
+static bool fSlideDown(Grid_t *gridPtr)
 {
+   bool atLeastOneMoved = false;
    bool moved = false;
    do
    {
@@ -122,15 +196,22 @@ void Grid_UpdateDown(Grid_t *gridPtr)
                   Tile_SetExp(&gridPtr->tiles[r + 1][c], gridPtr->tiles[r][c].exp);
                   Tile_SetExp(&gridPtr->tiles[r][c], 0);
                   moved = true;
+                  atLeastOneMoved = true;
                }
             }
          }
       }
    } while (moved);
+   return atLeastOneMoved;
 }
 
-void Grid_UpdateLeft(Grid_t *gridPtr)
+/**
+ * Push tiles left until tiles cannot be pushed left anymore.
+ * @note this function does not combine/merge tiles.
+ */
+static bool fSlideLeft(Grid_t *gridPtr)
 {
+   bool atLeastOneMoved = false;
    bool moved = false;
    do
    {
@@ -142,27 +223,34 @@ void Grid_UpdateLeft(Grid_t *gridPtr)
             if (gridPtr->tiles[r][c].exp != 0)
             {
                // Move tile one row left if left is clear
-               if (gridPtr->tiles[r][c-1].exp == 0)
+               if (gridPtr->tiles[r][c - 1].exp == 0)
                {
-                  Tile_SetExp(&gridPtr->tiles[r][c-1], gridPtr->tiles[r][c].exp);
+                  Tile_SetExp(&gridPtr->tiles[r][c - 1], gridPtr->tiles[r][c].exp);
                   Tile_SetExp(&gridPtr->tiles[r][c], 0);
                   moved = true;
+                  atLeastOneMoved = true;
                }
             }
          }
       }
    } while (moved);
+   return atLeastOneMoved;
 }
 
-void Grid_UpdateRight(Grid_t *gridPtr)
+/**
+ * Push tiles right until tiles cannot be pushed right anymore.
+ * @note this function does not combine/merge tiles.
+ */
+static bool fSlideRight(Grid_t *gridPtr)
 {
+   bool atLeastOneMoved = false;
    bool moved = false;
    do
    {
       moved = false;
       for (int r = 0; r < GRID_SIZE; r++)
       {
-         for (int c = GRID_SIZE-2; c >= 0; c--)
+         for (int c = GRID_SIZE - 2; c >= 0; c--)
          {
             if (gridPtr->tiles[r][c].exp != 0)
             {
@@ -172,9 +260,118 @@ void Grid_UpdateRight(Grid_t *gridPtr)
                   Tile_SetExp(&gridPtr->tiles[r][c + 1], gridPtr->tiles[r][c].exp);
                   Tile_SetExp(&gridPtr->tiles[r][c], 0);
                   moved = true;
+                  atLeastOneMoved = true;
                }
             }
          }
       }
    } while (moved);
+   return atLeastOneMoved;
 }
+
+/**
+ * Combine/merge tiles of the same value as tiles get pushed up.
+ * @note this tile doesn't push tiles.
+ */
+static bool fMergeUp(Grid_t *gridPtr)
+{
+   bool merged = false;
+   for (int c = 0; c < GRID_SIZE; c++)
+   {
+      for (int r = 1; r < GRID_SIZE; r++)
+      {
+         if (gridPtr->tiles[r][c].exp != 0)
+         {
+
+            // Move tile one row up if above is clear
+            if (gridPtr->tiles[r - 1][c].exp == gridPtr->tiles[r][c].exp)
+            {
+               Tile_SetExp(&gridPtr->tiles[r - 1][c], gridPtr->tiles[r][c].exp + 1);
+               Tile_SetExp(&gridPtr->tiles[r][c], 0);
+               merged = true;
+            }
+         }
+      }
+   }
+   return merged;
+}
+
+static bool fMergeDown(Grid_t *gridPtr)
+{
+   bool merged = false;
+   for (int c = 0; c < GRID_SIZE; c++)
+   {
+      for (int r = GRID_SIZE - 2; r >= 0; r--)
+      {
+         if (gridPtr->tiles[r][c].exp != 0)
+         {
+            // Move tile one row down if below is clear
+            if (gridPtr->tiles[r + 1][c].exp == gridPtr->tiles[r][c].exp)
+            {
+               Tile_SetExp(&gridPtr->tiles[r + 1][c], gridPtr->tiles[r][c].exp + 1);
+               Tile_SetExp(&gridPtr->tiles[r][c], 0);
+               merged = true;
+            }
+         }
+      }
+   }
+   return merged;
+}
+
+/**
+ * Combine/merge tiles of the same value as tiles get pushed up.
+ * @note this tile doesn't push tiles.
+ *
+ * Examples of left merge:
+ * [2, 0, 2, 4] -> [4, 4, 0, 0]
+ * [0, 0, 2, 2] -> [4, 0, 0, 0]
+ * [2, 2, 0, 0] -> [4, 0, 0, 0]
+ * [2, 2, 2, 2, 2] -> [4, 4, 2, 0, 0]
+ * [8, 16, 16, 8] -> [8, 32, 8, 0]
+ */
+static bool fMergeLeft(Grid_t *gridPtr)
+{
+   bool merged = false;
+   for (int r = 0; r < GRID_SIZE; r++)
+   {
+      for (int c = 1; c < GRID_SIZE; c++)
+      {
+         if (gridPtr->tiles[r][c].exp != 0)
+         {
+            // If value to the left is the same, double the value of that tile and
+            // clear the current tile.
+            if (gridPtr->tiles[r][c - 1].exp == gridPtr->tiles[r][c].exp)
+            {
+               Tile_SetExp(&gridPtr->tiles[r][c - 1], gridPtr->tiles[r][c].exp + 1);
+               Tile_SetExp(&gridPtr->tiles[r][c], 0);
+               merged = true;
+            }
+         }
+      }
+   }
+   return merged;
+}
+
+static bool fMergeRight(Grid_t *gridPtr)
+{
+   bool merged = false;
+   for (int r = 0; r < GRID_SIZE; r++)
+   {
+      for (int c = GRID_SIZE - 2; c >= 0; c--)
+      {
+         if (gridPtr->tiles[r][c].exp != 0)
+         {
+            // If value to the right is the same, double the value of that tile and
+            // clear the current tile.
+            if (gridPtr->tiles[r][c + 1].exp == gridPtr->tiles[r][c].exp)
+            {
+               Tile_SetExp(&gridPtr->tiles[r][c + 1], gridPtr->tiles[r][c].exp + 1);
+               Tile_SetExp(&gridPtr->tiles[r][c], 0);
+               merged = true;
+            }
+         }
+      }
+   }
+   return merged;
+}
+
